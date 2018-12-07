@@ -1,6 +1,6 @@
 ---
 - name: add the OS specific variables
-  include_vars: "{{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_os_family.split(' ')[0] }}.yml"
 
 - name: test to see if selinux is running
   command: getenforce
@@ -31,7 +31,7 @@
   changed_when: false
 
 - name: create sshd_config and set permissions to root/600
-  template: src='opensshd.conf.j2' dest='/etc/ssh/sshd_config' mode=0600 owner="{{ ssh_owner }}" group="{{ ssh_group }}" validate="/usr/sbin/sshd -T -f %s"
+  template: src='opensshd.conf.j2' dest='/etc/ssh/sshd_config' mode=0600 owner="{{ ssh_owner }}" group="{{ ssh_group }}" validate="/usr/sbin/sshd -t -f %s"
   notify: restart sshd
   when: ssh_server_hardening
 
